@@ -113,7 +113,7 @@ pub struct ProveZkrRequest {
     pub control_id: ::core::option::Option<super::base::Digest>,
     #[prost(bytes = "vec", tag = "3")]
     pub input: ::prost::alloc::vec::Vec<u8>,
-    /// This is not required when used by a CoprocessorRequest
+    /// This is optional in the context of a CoprocessorRequest
     #[prost(message, optional, tag = "4")]
     pub receipt_out: ::core::option::Option<AssetRequest>,
 }
@@ -315,10 +315,8 @@ pub struct ExecutorEnv {
     #[prost(message, optional, tag = "1")]
     pub binary: ::core::option::Option<Asset>,
     #[prost(map = "string, string", tag = "2")]
-    pub env_vars: ::std::collections::HashMap<
-        ::prost::alloc::string::String,
-        ::prost::alloc::string::String,
-    >,
+    pub env_vars:
+        ::std::collections::HashMap<::prost::alloc::string::String, ::prost::alloc::string::String>,
     #[prost(string, repeated, tag = "3")]
     pub slice_ios: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
     #[prost(uint32, repeated, tag = "4")]
