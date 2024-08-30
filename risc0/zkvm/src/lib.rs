@@ -91,16 +91,19 @@ pub use risc0_binfmt::{ExitCode, InvalidExitCodeError, SystemState};
 pub use risc0_zkvm_platform::{align_up, declare_syscall, memory::GUEST_MAX_MEM, PAGE_SIZE};
 
 pub use self::receipt_claim::{
-    Assumption, Assumptions, Input, MaybePruned, Output, PrunedValueError, ReceiptClaim,
+    Assumption, Assumptions, Input, MaybePruned, Output, PrunedValueError, ReceiptClaim, Unknown,
 };
 #[cfg(all(not(target_os = "zkvm"), feature = "prove",))]
 pub use {
     self::host::{
         api::server::Server as ApiServer,
         client::prove::local::LocalProver,
-        recursion::RECURSION_PO2,
+        recursion::{
+            prove::{prove_zkr, register_zkr},
+            RECURSION_PO2,
+        },
         server::{
-            exec::{compose::register_zkr, executor::ExecutorImpl},
+            exec::executor::ExecutorImpl,
             prove::{get_prover_server, HalPair, ProverServer},
             session::{
                 FileSegmentRef, NullSegmentRef, Segment, SegmentRef, Session, SessionEvents,
@@ -120,7 +123,7 @@ pub use {
             client::Client as ApiClient, Asset, AssetRequest, Connector, SegmentInfo, SessionInfo,
         },
         client::{
-            env::{ExecutorEnv, ExecutorEnvBuilder},
+            env::{CoprocessorCallback, ExecutorEnv, ExecutorEnvBuilder, ProveZkrRequest},
             prove::{
                 bonsai::BonsaiProver, default_executor, default_prover, external::ExternalProver,
                 Executor, Prover, ProverOpts, ReceiptKind,

@@ -12,19 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// TODO(#1871): Refactor how these types are used, or the structuring of the modules, such that we don't
-// need to allow dead code here.
-#![cfg_attr(target_os = "zkvm", allow(dead_code))]
 
 //! Minimal Merkle tree implementation used in the recursion system for committing to a group of
 //! control IDs.
 
-// NOTE: Changing this constant must be coordinated with the circuit. In order to avoid needing to
-// change the circuit later, this is set to 8 which allows for enough control IDs to be encoded
-// that we are unlikely to need more.
-/// Depth of the Merkle tree to use for encoding the set of allowed control IDs.
-#[cfg(feature = "prove")]
-pub const ALLOWED_CODE_MERKLE_DEPTH: usize = 8;
 
 use alloc::vec::Vec;
 
@@ -33,6 +24,13 @@ use borsh::{BorshDeserialize, BorshSerialize};
 use risc0_core::field::baby_bear::BabyBear;
 use risc0_zkp::core::{digest::Digest, hash::HashFn};
 use serde::{Deserialize, Serialize};
+
+// NOTE: Changing this constant must be coordinated with the circuit. In order to avoid needing to
+// change the circuit later, this is set to 8 which allows for enough control IDs to be encoded
+// that we are unlikely to need more.
+/// Depth of the Merkle tree to use for encoding the set of allowed control IDs.
+#[cfg(feature = "prove")]
+pub const ALLOWED_CODE_MERKLE_DEPTH: usize = 8;
 
 /// Merkle tree implementation used in the recursion system to commit to a set of recursion
 /// programs, and to verify the inclusion of a given program in the set.

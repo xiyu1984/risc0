@@ -19,8 +19,9 @@ use bonsai_sdk::blocking::Client;
 
 use super::Prover;
 use crate::{
-    compute_image_id, is_dev_mode, sha::Digestible, ExecutorEnv, Groth16Receipt, InnerReceipt,
-    ProveInfo, ProverOpts, Receipt, ReceiptKind, VerifierContext,
+    compute_image_id, is_dev_mode, sha::Digestible, AssumptionReceipt, ExecutorEnv, Groth16Receipt,
+    InnerReceipt, ProveInfo, ProverOpts, Receipt, ReceiptKind, SessionStats, VerifierContext,
+    VERSION,
 };
 
 /// An implementation of a [Prover] that runs proof workloads via Bonsai.
@@ -52,7 +53,7 @@ impl Prover for BonsaiProver {
         elf: &[u8],
         opts: &ProverOpts,
     ) -> Result<ProveInfo> {
-        let client = Client::from_env(crate::VERSION)?;
+        let client = Client::from_env(VERSION)?;
 
         // Compute the ImageID and upload the ELF binary
         let image_id = compute_image_id(elf)?;
@@ -62,12 +63,12 @@ impl Prover for BonsaiProver {
         // upload input data
         let input_id = client.upload_input(env.input)?;
 
-        // upload receipts
-        let mut receipts_ids: Vec<String> = vec![];
-        for assumption in &env.assumptions.borrow().cached {
+        // upload assumption receipts
+        let mut receipts_ids = vec![];
+        for assumption in env.assumptions.borrow().iter() {
             let serialized_receipt = match assumption {
-                crate::AssumptionReceipt::Proven(receipt) => bincode::serialize(receipt)?,
-                crate::AssumptionReceipt::Unresolved(_) => {
+                AssumptionReceipt::Proven(receipt) => bincode::serialize(receipt)?,
+                AssumptionReceipt::Unresolved(_) => {
                     bail!("only proven assumptions can be uploaded to Bonsai.")
                 }
             };
@@ -115,7 +116,7 @@ impl Prover for BonsaiProver {
                 }
                 break ProveInfo {
                     receipt,
-                    stats: crate::SessionStats {
+                    stats: SessionStats {
                         segments: stats.segments,
                         total_cycles: stats.total_cycles,
                         user_cycles: stats.cycles,

@@ -29,7 +29,8 @@ use crate::{
     },
     receipt_claim::Unknown,
     Assumption, Assumptions, ExitCode, Groth16Receipt, Input, Journal, MaybePruned, Output,
-    ProveInfo, ProverOpts, Receipt, ReceiptClaim, ReceiptKind, SessionStats, TraceEvent,
+    ProveInfo, ProveZkrRequest, ProverOpts, Receipt, ReceiptClaim, ReceiptKind, SessionStats,
+    TraceEvent,
 };
 
 mod ver {
@@ -972,6 +973,18 @@ impl TryFrom<pb::core::MaybePruned> for MaybePruned<Unknown> {
         Ok(match value.kind.ok_or(malformed_err())? {
             pb::core::maybe_pruned::Kind::Value(_) => Err(malformed_err())?,
             pb::core::maybe_pruned::Kind::Pruned(digest) => Self::Pruned(digest.try_into()?),
+        })
+    }
+}
+
+impl TryFrom<pb::api::ProveZkrRequest> for ProveZkrRequest {
+    type Error = anyhow::Error;
+
+    fn try_from(value: pb::api::ProveZkrRequest) -> Result<Self> {
+        Ok(Self {
+            claim_digest: value.claim_digest.ok_or(malformed_err())?.try_into()?,
+            control_id: value.control_id.ok_or(malformed_err())?.try_into()?,
+            input: value.input,
         })
     }
 }

@@ -26,7 +26,7 @@ use crate::{
     host::{client::env::SegmentPath, prove_info::SessionStats},
     sha::Digest,
     Assumption, AssumptionReceipt, Assumptions, ExitCode, Journal, MaybePruned, Output,
-    ReceiptClaim,
+    ProveZkrRequest, ReceiptClaim,
 };
 
 #[derive(Clone, Default, Serialize, Deserialize, Debug)]
@@ -80,6 +80,10 @@ pub struct Session {
 
     /// The system state of the final [MemoryImage] at the end of execution.
     pub post_state: SystemState,
+
+    /// A list of pending ZKR proof requests.
+    // TODO: make this scalable so we don't OOM
+    pub pending_zkrs: Vec<ProveZkrRequest>,
 }
 
 /// The execution trace of a portion of a program.
@@ -143,6 +147,7 @@ impl Session {
         total_cycles: u64,
         pre_state: SystemState,
         post_state: SystemState,
+        pending_zkrs: Vec<ProveZkrRequest>,
     ) -> Self {
         Self {
             segments,
@@ -156,6 +161,7 @@ impl Session {
             total_cycles,
             pre_state,
             post_state,
+            pending_zkrs,
         }
     }
 
@@ -171,6 +177,13 @@ impl Session {
         // Construct the Output struct for the session, checking internal consistency.
         // NOTE: The Session output is distinct from the final Segment output because in the
         // Session output any proven assumptions are not included.
+        self.claim_with_assumptions(self.assumptions.iter().map(|(_, x)| x))
+    }
+
+    pub(crate) fn claim_with_assumptions<'a>(
+        &self,
+        assumptions: impl Iterator<Item = &'a AssumptionReceipt>,
+    ) -> Result<ReceiptClaim> {
         let output = if self.exit_code.expects_output() {
             self.journal
                 .as_ref()
@@ -178,9 +191,8 @@ impl Session {
                     Ok(Output {
                         journal: journal.bytes.clone().into(),
                         assumptions: Assumptions(
-                            self.assumptions
-                                .iter()
-                                .filter_map(|(_, ar)| match ar {
+                            assumptions
+                                .filter_map(|x| match x {
                                     AssumptionReceipt::Proven(_) => None,
                                     AssumptionReceipt::Unresolved(a) => Some(a.clone().into()),
                                 })
