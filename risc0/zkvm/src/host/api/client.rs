@@ -718,7 +718,7 @@ impl Client {
         match coprocessor_request.kind.ok_or(malformed_err())? {
             pb::api::coprocessor_request::Kind::ProveZkr(proof_request) => {
                 let proof_request = proof_request.try_into()?;
-                let coprocessor = env.coprocessor.clone().unwrap();
+                let coprocessor = env.coprocessor.clone().ok_or(malformed_err())?;
                 let mut coprocessor = coprocessor.borrow_mut();
                 coprocessor.prove_zkr(proof_request)
             }
