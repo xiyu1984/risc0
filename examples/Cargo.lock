@@ -3552,7 +3552,6 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "num-bigint 0.4.6",
- "risc0-build",
  "risc0-circuit-bigint",
  "risc0-circuit-bigint-test-methods",
  "risc0-zkvm",

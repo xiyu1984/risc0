@@ -23,10 +23,13 @@ use risc0_circuit_rv32im::prove::segment::Segment as CircuitSegment;
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    host::{client::env::SegmentPath, prove_info::SessionStats},
+    host::{
+        client::env::{ProveZkrRequest, SegmentPath},
+        prove_info::SessionStats,
+    },
     sha::Digest,
     Assumption, AssumptionReceipt, Assumptions, ExitCode, Journal, MaybePruned, Output,
-    ProveZkrRequest, ReceiptClaim,
+    ReceiptClaim,
 };
 
 #[derive(Clone, Default, Serialize, Deserialize, Debug)]
@@ -83,7 +86,7 @@ pub struct Session {
 
     /// A list of pending ZKR proof requests.
     // TODO: make this scalable so we don't OOM
-    pub pending_zkrs: Vec<ProveZkrRequest>,
+    pub(crate) pending_zkrs: Vec<ProveZkrRequest>,
 }
 
 /// The execution trace of a portion of a program.
@@ -136,7 +139,7 @@ pub trait SessionEvents {
 impl Session {
     /// Construct a new [Session] from its constituent components.
     #[allow(clippy::too_many_arguments)]
-    pub fn new(
+    pub(crate) fn new(
         segments: Vec<Box<dyn SegmentRef>>,
         input: Digest,
         journal: Option<Vec<u8>>,

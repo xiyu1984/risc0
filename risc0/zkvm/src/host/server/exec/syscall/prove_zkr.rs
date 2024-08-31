@@ -21,7 +21,10 @@ use risc0_zkvm_platform::{
     WORD_SIZE,
 };
 
-use crate::{recursion::prove::get_registered_zkr, Assumption, AssumptionReceipt, ProveZkrRequest};
+use crate::{
+    host::client::env::ProveZkrRequest, recursion::prove::get_registered_zkr, Assumption,
+    AssumptionReceipt,
+};
 
 use super::{Syscall, SyscallContext};
 

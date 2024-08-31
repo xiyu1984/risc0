@@ -67,6 +67,7 @@ impl SegmentPath {
 }
 
 /// A ZKR proof request.
+#[stability::unstable]
 pub struct ProveZkrRequest {
     /// The digest of the claim that this ZKR program is expected to produce.
     pub claim_digest: Digest,
@@ -80,6 +81,7 @@ pub struct ProveZkrRequest {
 
 /// A trait that supports the ability to be notified of ZKR proof requests
 /// on-demand.
+#[stability::unstable]
 pub trait CoprocessorCallback {
     /// Request that a proof of a ZKR is produced.
     fn prove_zkr(&mut self, request: ProveZkrRequest) -> Result<()>;

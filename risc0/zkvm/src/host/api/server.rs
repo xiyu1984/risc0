@@ -27,10 +27,16 @@ use prost::Message;
 use super::{malformed_err, path_to_string, pb, ConnectionWrapper, Connector, TcpConnector};
 use crate::{
     get_prover_server, get_version,
-    host::{client::slice_io::SliceIo, server::session::NullSegmentRef},
-    prove_zkr, Assumption, CoprocessorCallback, ExecutorEnv, ExecutorImpl, InnerAssumptionReceipt,
-    ProveZkrRequest, ProverOpts, Receipt, ReceiptClaim, Segment, SegmentReceipt, SuccinctReceipt,
-    TraceCallback, TraceEvent, VerifierContext,
+    host::{
+        client::{
+            env::{CoprocessorCallback, ProveZkrRequest},
+            slice_io::SliceIo,
+        },
+        server::session::NullSegmentRef,
+    },
+    prove_zkr, Assumption, ExecutorEnv, ExecutorImpl, InnerAssumptionReceipt, ProverOpts, Receipt,
+    ReceiptClaim, Segment, SegmentReceipt, SuccinctReceipt, TraceCallback, TraceEvent,
+    VerifierContext,
 };
 
 /// A server implementation for handling requests by clients of the zkVM.

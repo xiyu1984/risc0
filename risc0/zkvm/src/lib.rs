@@ -93,7 +93,9 @@ pub use risc0_zkvm_platform::{align_up, declare_syscall, memory::GUEST_MAX_MEM, 
 pub use self::receipt_claim::{
     Assumption, Assumptions, Input, MaybePruned, Output, PrunedValueError, ReceiptClaim, Unknown,
 };
-#[cfg(all(not(target_os = "zkvm"), feature = "prove",))]
+
+#[cfg(not(target_os = "zkvm"))]
+#[cfg(feature = "prove")]
 pub use {
     self::host::{
         api::server::Server as ApiServer,
@@ -116,14 +118,16 @@ pub use {
         docker::stark_to_snark, to_json as seal_to_json, ProofJson as Groth16ProofJson,
     },
 };
-#[cfg(all(not(target_os = "zkvm"), feature = "client"))]
+
+#[cfg(not(target_os = "zkvm"))]
+#[cfg(feature = "client")]
 pub use {
     self::host::{
         api::{
             client::Client as ApiClient, Asset, AssetRequest, Connector, SegmentInfo, SessionInfo,
         },
         client::{
-            env::{CoprocessorCallback, ExecutorEnv, ExecutorEnvBuilder, ProveZkrRequest},
+            env::{ExecutorEnv, ExecutorEnvBuilder},
             prove::{
                 bonsai::BonsaiProver, default_executor, default_prover, external::ExternalProver,
                 Executor, Prover, ProverOpts, ReceiptKind,
@@ -132,6 +136,12 @@ pub use {
     },
     risc0_circuit_rv32im::trace::{TraceCallback, TraceEvent},
 };
+
+#[cfg(not(target_os = "zkvm"))]
+#[cfg(feature = "client")]
+#[cfg(feature = "unstable")]
+pub use self::host::client::env::{CoprocessorCallback, ProveZkrRequest};
+
 #[cfg(not(target_os = "zkvm"))]
 pub use {
     self::host::{

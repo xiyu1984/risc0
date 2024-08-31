@@ -12,9 +12,6 @@ risc0-zkvm = { path = "../../risc0/zkvm", features = ["unstable"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 workerpool = "1.2"
 
-[build-dependencies]
-risc0-build = { path = "../../risc0/build" }
-
 [features]
 cuda = ["risc0-zkvm/cuda"]
 default = []

@@ -40,11 +40,11 @@ use risc0_zkvm_platform::{
 
 use crate::{
     host::client::{
-        env::{AssumptionReceipts, CoprocessorCallbackRef},
+        env::{AssumptionReceipts, CoprocessorCallbackRef, ProveZkrRequest},
         posix_io::PosixIo,
         slice_io::SliceIo,
     },
-    Assumption, AssumptionReceipt, ExecutorEnv, ProveZkrRequest,
+    Assumption, AssumptionReceipt, ExecutorEnv,
 };
 
 use self::{fork::SysFork, pipe::SysPipe, prove_zkr::SysProveZkr, verify::SysVerify};

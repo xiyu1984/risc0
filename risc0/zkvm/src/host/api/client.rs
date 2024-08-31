@@ -24,9 +24,12 @@ use super::{
 };
 use crate::{
     get_version,
-    host::{api::SegmentInfo, client::prove::get_r0vm_path},
+    host::{
+        api::SegmentInfo,
+        client::{env::ProveZkrRequest, prove::get_r0vm_path},
+    },
     receipt::{AssumptionReceipt, SegmentReceipt, SuccinctReceipt},
-    ExecutorEnv, Journal, ProveInfo, ProveZkrRequest, ProverOpts, Receipt, ReceiptClaim, Unknown,
+    ExecutorEnv, Journal, ProveInfo, ProverOpts, Receipt, ReceiptClaim, Unknown,
 };
 
 /// A client implementation for interacting with a zkVM server.
@@ -173,6 +176,7 @@ impl Client {
     }
 
     /// Prove the specified ZKR proof request.
+    #[stability::unstable]
     pub fn prove_zkr(
         &self,
         proof_request: ProveZkrRequest,
